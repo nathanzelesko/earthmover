@@ -1,1 +1,1 @@
-# earthmover
+This repository holds code for the paper *Earthmover-Based Manifold Learning for Analyzing Molecular Conformation Spaces* by Nathan Zelesko, Amit Moscovich, Joe Kileel, and Amit Singer. In the coming days, the repository will become better organized and more user-friendly.
