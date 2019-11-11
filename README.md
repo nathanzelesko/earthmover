@@ -1,11 +1,11 @@
-This repository holds code for the paper *Earthmover-Based Manifold Learning for Analyzing Molecular Conformation Spaces* by Nathan Zelesko, Amit Moscovich, Joe Kileel, and Amit Singer. earthmover_main.py can be used (along with the files in the modules folder) to generate the type of data and figures seen in the paper. 
+This repository contains code for the generating the figures in the manuscript
+[**Earthmover-Based Manifold Learning for Analyzing Molecular Conformation Spaces**](https://web.math.princeton.edu/~jkileel/emd_manifolds_Oct16.pdf) by Nathan Zelesko, Amit Moscovich, Joe Kileel, and Amit Singer.
 
-Prqrequisites:
-- An installation of Python 3 with SciPy and scikit-learn. If you don't have ths installed, install the Anaconda python distribution.
+Prerequisites:
+- Python 3 with SciPy and scikit-learn. I recommend the [Anaconda python distribution](https://www.anaconda.com/distribution/).
 - The PyWavelets package (included in Anaconda)
-- The mrcfile module, to install it run `pip install mrcfile`.
+- The mrcfile Python module, to install it run `pip install mrcfile`.
 
-You can then run './produce_all_figures.py' to compute and produce all the figures.
+You can then run './produce_all_figures.py' to generate the figures in the paper. This will take a few hours.
 
-Note that this script must be run from the base project directory, otherwise it can't find the data file `rotating_shaft_res6.mrc`.
-
+For any questions, email **nathan@zelesko.com** or **amit@moscovich.org**.
