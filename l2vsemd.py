@@ -1,15 +1,18 @@
+import os
+
 import numpy as np
+import matplotlib.pyplot as plt
+
 import particle
 import wavetransform
-import matplotlib.pyplot as plt
 
 n = 360
 
-def generate_standard_data(computation_dir):
-    data,count,angles,colors = particle.generate_rotated_dataset(n,std=0,semirandom=False)
-    np.save(computation_dir+ f"Raw Data/raw_data_"+str(n)+"_standard",data)
-    np.save(computation_dir+ f"Angles/angles_"+str(n)+"_standard",angles)
-    np.save(computation_dir+ f"Colors/colors_"+str(n)+"_standard",colors)    
+def generate_standard_data(computation_dir, particle_dir):
+    (data, count, angles, colors) = particle.generate_rotated_dataset(n, particle_dir, std=0,semirandom=False)
+    np.save(os.path.join(computation_dir, f"Noiseless Data/Raw Data/raw_data_{n}_standard"), data)
+    np.save(os.path.join(computation_dir, f"Noiseless Data/Angles/angles_{n}_standard"), angles)
+    np.save(os.path.join(computation_dir, f"Noiseless Data/Colors/colors_{n}_standard"), colors)    
     
     
 def calculate_emds(data):
@@ -28,11 +31,13 @@ def calculate_euclid_dists(data):
     
     
 def emd_vs_euclid_plot(data,computation_dir,figure_dir):
-    angles = np.load(computation_dir+ f"Angles/angles_"+str(n)+"_standard.npy")
+    angles = np.load(os.path.join(computation_dir, f"Noiseless Data/Angles/angles_{n}_standard.npy"))
     for i in range(len(angles)):
         if angles[i] > 180:
             angles[i] = -(360 - angles[i])
+    print('Calculatind EMD distances')
     emds = calculate_emds(data)
+    print('Calculatind Euclidean distances')
     eucs = calculate_euclid_dists(data)
     
     sorted_emds = np.array([x for y, x in sorted(zip(angles,emds))])
@@ -56,7 +61,7 @@ def emd_vs_euclid_plot(data,computation_dir,figure_dir):
     plt.savefig(figure_dir+f"L2vsEMD.pdf",format='pdf',pad_inches=0)  
     
     
-def emd_vs_euclid(computation_dir,figure_dir):
-    generate_standard_data()
-    data = np.load(computation_dir + f"Raw Data/raw_data_"+str(n)+"_standard.npy")
-    emd_vs_euclid_plot(data,figure_dir)
+def emd_vs_euclid(computation_dir, particle_dir, figure_dir):
+    generate_standard_data(computation_dir, particle_dir)
+    data = np.load(os.path.join(computation_dir, f"Noiseless Data/Raw Data/raw_data_{n}_standard.npy"))
+    emd_vs_euclid_plot(data, computation_dir, figure_dir)

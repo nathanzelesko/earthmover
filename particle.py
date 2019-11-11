@@ -1,9 +1,12 @@
+import os
+import random as rand
+
 import numpy as np
 import scipy.ndimage as ndimage
-import mrcfile
 import matplotlib.pyplot as plt
 import matplotlib.colors as c
-import random as rand
+
+import mrcfile
 
 
 def save_particle(particle,filename='example.mrc'):
@@ -12,7 +15,7 @@ def save_particle(particle,filename='example.mrc'):
 
 
 def load_particle(particle_dir,filename='rotating_shaft_res6.mrc'):
-    with mrcfile.open(particle_dir+filename) as mrc:
+    with mrcfile.open(os.path.join(particle_dir, filename)) as mrc:
         particle = mrc.data
     return particle
 
@@ -65,4 +68,5 @@ def generate_rotated_dataset(points,particle_dir,std,semirandom=True):
         for angle in angles:
             colors.append(c.to_hex(cmap(angle/360)))
             data.append(rotate_particle(og,angle,std))
-    return data,count,angles,colors
+
+    return (data, count, angles, colors)
