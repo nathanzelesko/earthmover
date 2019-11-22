@@ -1,5 +1,9 @@
 import numpy as np
 import pywt
+import utils
+
+DIMENSION = 3
+
 
 def wave_emd(p1,p2):
     p = np.asarray(p1)-np.asarray(p2)
@@ -7,23 +11,28 @@ def wave_emd(p1,p2):
     emd = np.sum(p)
     return emd
 
-def volume_to_wavelet_domain(p0,l=5):
-    p = p0.copy()
-    m = np.sum(p)
-    p = np.divide(p,m)
-    
-    wavelet = pywt.Wavelet('coif3')
-    
-    coeffs = pywt.wavedecn(p,wavelet,mode='zero',level=l)
-    
-    coeffs = coeffs[1:]
-    vect = []
-    for j in range(len(coeffs)):
-        for entry in coeffs[-1-j]:
-            flat = np.asarray(coeffs[-1-j][entry]).flatten(order='C')
-            for item in flat:
-                vect.append(item*(2**(j*(1+(3/2)))))
-    return np.asarray(vect).flatten()
+
+def volume_to_wavelet_domain_fast(volume, level, wavelet):
+    """
+    This function computes an embedding of non-negative 3D Numpy arrays such that the L_1 distance
+    between the resulting embeddings is approximately equal to the Earthmover distance of the arrays.
+
+    It implements the weighting scheme in Eq. (20) of the Technical report by Shirdhonkar, Sameer, and David W. Jacobs. "CAR-TR-1025 CS-TR-4908 UMIACS-TR-2008-06." (2008).
+    """
+    assert len(volume.shape) == DIMENSION
+
+    volume_dwt = pywt.wavedecn(volume/volume.sum(), wavelet, mode='zero', level=level)
+
+    detail_coefs = volume_dwt[1:]
+    n_levels = len(detail_coefs)
+
+    weighted_coefs = []
+    for (j, details_level_j) in enumerate(volume_dwt[1:]):
+        for coefs in details_level_j.values():
+            multiplier = 2**((n_levels-1-j)*(1+(DIMENSION/2.0)))
+            weighted_coefs.append(coefs.flatten()*multiplier)
+
+    return np.concatenate(weighted_coefs)
 
 
 def wave_transform_data(data):
