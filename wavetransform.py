@@ -12,7 +12,7 @@ def wave_emd(p1,p2):
     return emd
 
 
-def volume_to_wavelet_domain_fast(volume, level, wavelet):
+def volume_to_wavelet_domain(volume, level, wavelet):
     """
     This function computes an embedding of non-negative 3D Numpy arrays such that the L_1 distance
     between the resulting embeddings is approximately equal to the Earthmover distance of the arrays.
