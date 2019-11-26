@@ -17,7 +17,7 @@ def generate_standard_data(computation_dir, particle_dir):
     
 def calculate_emds(data):
     emds = []
-    waves = wavetransform.wave_transform_data(data)
+    waves = wavetransform.wave_transform_volumes(data)
     for i in range(len(data)):
         emds.append(wavetransform.wave_emd(waves[0],waves[i]))
     return emds

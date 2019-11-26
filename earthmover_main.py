@@ -3,13 +3,13 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy
-import wavetransform
+from scipy.spatial.distance import pdist, squareform
 
+import wavetransform
 import particle
 import laplacian
 import utils
 import l2vsemd
-from sklearn.metrics import pairwise_distances
 
 BASEDIR = "./"
 
@@ -55,13 +55,13 @@ def generate_datasets(ns,std,particle_dir,computation_dir):
         np.save(os.path.join(computation_dir, f"Colors/colors_{n}"), colors)
 
 
-def dist_matrix(data,metric,std,computation_dir):
+def dist_matrix(data, metric, computation_dir):
     if metric == 'euclidean':
         new_data = []
         for item in data:
             new_data.append(item.flatten())
         start = time.time()
-        dist = pairwise_distances(new_data,metric='euclidean')
+        dist = squareform(pdist(new_data, 'euclidean'))
         end = time.time()
         elapsed = end-start
         np.save(os.path.join(computation_dir, f'Euclidean Distance Matrices/dist_matrix_{metric}_{len(data)}'),dist)
@@ -69,11 +69,11 @@ def dist_matrix(data,metric,std,computation_dir):
         
     elif metric == 'emd':
         start = time.time()
-        waves = wavetransform.wave_transform_data(data)
+        waves = wavetransform.wave_transform_volumes(data)
         end = time.time()
         wave_elapsed = end-start
         start = time.time()
-        dist = pairwise_distances(waves,metric='manhattan')
+        dist = squareform(pdist(waves, 'cityblock')) 
         end = time.time()
         elapsed = end-start
         np.save(os.path.join(computation_dir, f'WEMD Distance Matrices/dist_matrix_{metric}_{len(data)}'), dist)
@@ -88,8 +88,8 @@ def calculate_distances(ns,std,computation_dir):
     for n in ns:
         print(f'    n={n}',)
         data = np.load(computation_dir+f"Raw Data/raw_data_"+str(n)+".npy")
-        euc_elapsed = dist_matrix(data,'euclidean',std,computation_dir)
-        wave_elapsed,emd_elapsed = dist_matrix(data,'emd',std,computation_dir)
+        euc_elapsed = dist_matrix(data,'euclidean', computation_dir)
+        wave_elapsed,emd_elapsed = dist_matrix(data,'emd', computation_dir)
         euc_dist_times.append(euc_elapsed)
         emd_dist_times.append(emd_elapsed)
         wave_trans_times.append(wave_elapsed)

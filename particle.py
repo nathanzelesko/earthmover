@@ -21,13 +21,9 @@ def load_particle(particle_dir,filename='rotating_shaft_res6.mrc'):
 
 
 def rotate_particle(particle,angle,std):
-    particle = ndimage.rotate(particle,angle,axes=(0,2),reshape=False)
-    if std != 0:
-        for i in range(np.shape(particle)[0]):
-            for j in range(np.shape(particle)[1]):
-                for k in range(np.shape(particle)[2]):
-                    particle[i][j][k] = particle[i][j][k] + np.random.normal(0,std)
-    return particle
+    rotated_clean_particle = ndimage.rotate(particle,angle,axes=(0,2),reshape=False)
+    noise = np.random.normal(loc=0, scale=std, size=rotated_clean_particle.shape)
+    return rotated_clean_particle+noise
 
 
 def generate_rotated_dataset(points,particle_dir,std,semirandom=True):

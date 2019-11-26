@@ -3,6 +3,8 @@ import pywt
 import utils
 
 DIMENSION = 3
+WAVELET_NAME = 'coif3'
+LEVEL = 5
 
 
 def wave_emd(p1,p2):
@@ -35,8 +37,6 @@ def volume_to_wavelet_domain(volume, level, wavelet):
     return np.concatenate(weighted_coefs)
 
 
-def wave_transform_data(data):
-    waves = []
-    for image in data:
-        waves.append(volume_to_wavelet_domain(image))
-    return waves
+def wave_transform_volumes(volumes):
+    wavelet = pywt.Wavelet(WAVELET_NAME)
+    return [volume_to_wavelet_domain(vol, LEVEL, wavelet) for vol in volumes]
