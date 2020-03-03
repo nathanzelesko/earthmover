@@ -6,7 +6,7 @@ def main():
     print(' ==== Running all calculations ====')
     earthmover_main.initial_calculations()
 
-    print(' ==== Proucing all figures ====')
+    print(' ==== Producing all figures ====')
     earthmover_main.figure_all()
 
 

@@ -3,7 +3,7 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy
-from scipy.spatial.distance import pdist, squareform
+import scipy.spatial.distance
 
 import wavetransform
 import particle
@@ -32,7 +32,7 @@ SEED = 2019
 MARKERSIZE = 75
 MARKEREDGEWIDTH = 0.5 
 DPI = 300
-EXTENSION = 'eps'
+EXTENSION = 'pdf'
 
 
 def mkdir_computation_dirs():
@@ -55,13 +55,27 @@ def generate_datasets(ns,std,particle_dir,computation_dir):
         np.save(os.path.join(computation_dir, f"Colors/colors_{n}"), colors)
 
 
+def all_l1_distances(X):
+    return scipy.spatial.distance.squareform(scipy.spatial.distance.pdist(X, 'cityblock')) 
+    #XTensor32 = torch.Tensor(X)
+    #distances = torch.nn.functional.pdist(XTensor32, p=1)
+    #return scipy.spatial.distance.squareform(distances)
+
+
+def all_l2_distances(X):
+    return scipy.spatial.distance.squareform(scipy.spatial.distance.pdist(X, 'euclidean')) 
+    #XTensor32 = torch.Tensor(X)
+    #distances = torch.nn.functional.pdist(XTensor32, p=2)
+    #return scipy.spatial.distance.squareform(distances)
+
+
 def dist_matrix(data, metric, computation_dir):
     if metric == 'euclidean':
         new_data = []
         for item in data:
             new_data.append(item.flatten())
         start = time.time()
-        dist = squareform(pdist(new_data, 'euclidean'))
+        dist = all_l2_distances(new_data)
         end = time.time()
         elapsed = end-start
         np.save(os.path.join(computation_dir, f'Euclidean Distance Matrices/dist_matrix_{metric}_{len(data)}'),dist)
@@ -73,7 +87,7 @@ def dist_matrix(data, metric, computation_dir):
         end = time.time()
         wave_elapsed = end-start
         start = time.time()
-        dist = squareform(pdist(waves, 'cityblock')) 
+        dist = all_l1_distances(waves)
         end = time.time()
         elapsed = end-start
         np.save(os.path.join(computation_dir, f'WEMD Distance Matrices/dist_matrix_{metric}_{len(data)}'), dist)
@@ -225,16 +239,16 @@ def figure_rotor_slice():
 
 def figure_all(): #Use to generate all data-based figures found in the paper
     mkdir_figures_dirs()
-    print('    Generating euclidean embeddings (noiseless)')
+    print('= Generating euclidean embeddings (noiseless)')
     figure_euclidean_embeddings_noiseless()
-    print('    Generating WEMD embeddings (noiseless)')
+    print('= Generating WEMD embeddings (noiseless)')
     figure_wemd_embeddings_noiseless()
-    print('    Generating euclidean embeddings (noisy)')
+    print('= Generating euclidean embeddings (noisy)')
     figure_euclidean_embeddings_noisy()
-    print('    Generating WEMD embeddings (noisy)')
+    print('= Generating WEMD embeddings (noisy)')
     figure_wemd_embeddings_noisy()
-    print('    Saving rotor slices')
+    print('= Saving rotor slices')
     figure_rotor_slice()
-    print('    Computing and saving WEMD vs Euclidean figure')
+    print('= Computing and saving WEMD vs Euclidean figure')
     l2vsemd.emd_vs_euclid(COMPUTATIONS_DIR, PARTICLE_DIR, FIGURES_DIR)
     
